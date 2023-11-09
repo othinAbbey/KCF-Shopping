@@ -36,5 +36,4 @@ model Cart {
   userId   Int
   products Product[]
   quantity Int[]
-  // Add other cart-related fields as needed
 }

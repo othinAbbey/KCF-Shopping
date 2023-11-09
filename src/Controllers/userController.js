@@ -1,34 +1,11 @@
-// const userService = require('../services/userService');
-
-// const userController = {
-//   signUp: (req, res) => {
-//     const { username, email, password } = req.body;
-//     const newUser = userService.registerUser(username, email, password);
-//     if (newUser.error) {
-//       return res.status(400).json({ error: newUser.error });
-//     }
-//     res.status(201).json(newUser);
-//   },
-
-//   login: (req, res) => {
-//     const { email, password } = req.body;
-//     const user = userService.loginUser(email, password);
-//     if (!user) {
-//       return res.status(401).json({ error: 'Invalid credentials' });
-//     }
-//     // Generate and send access token (not implemented here)
-//     const accessToken = 'sample_access_token'; // Generate a real token for authentication
-//     res.status(200).json({ accessToken, user });
-//   }
-// };
-
-// module.exports = userController;
-
-
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-// Function to create a new user
+const prisma = new PrismaClient();
+const saltRounds = 10;
+const secretKey = 'your-secret-key'; // Replace with a secure secret key
+
 async function createUser(username, email, password) {
   try {
     const newUser = await prisma.user.create({
@@ -45,7 +22,6 @@ async function createUser(username, email, password) {
   }
 }
 
-// Function to find a user by email
 async function findUserByEmail(email) {
   try {
     const user = await prisma.user.findUnique({
@@ -59,7 +35,6 @@ async function findUserByEmail(email) {
   }
 }
 
-// Function to authenticate a user by email and password
 async function authenticateUser(email, password) {
   try {
     const user = await prisma.user.findUnique({
@@ -72,12 +47,13 @@ async function authenticateUser(email, password) {
       return null; // User not found
     }
 
-    // Check if the password matches
-    if (user.password === password) {
-      return user; // Authentication successful
-    } else {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return null; // Incorrect password
     }
+
+    const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
+    return token;
   } catch (error) {
     throw error; // Handle error appropriately
   }
