@@ -1,45 +1,65 @@
-const productService = require('../services/productService');
+const productService = require("../services/productServices")
 
 const productController = {
-  getAllProducts: (req, res) => {
-    const products = productService.getAllProducts();
-    res.status(200).json(products);
-  },
-
-  addProduct: (req, res) => {
-    const { name, price, description, category, image, stock } = req.body;
-    const newProduct = productService.addProduct(name, price, description, category, image, stock);
-    res.status(201).json(newProduct);
-  },
-
-  getProductById: (req, res) => {
-    const productId = parseInt(req.params.productId);
-    const product = productService.getProductById(productId);
-    if (product) {
-      res.status(200).json(product);
-    } else {
-      res.status(404).json({ error: 'Product not found' });
+  getAllProducts: async (req, res) => {
+    try {
+      const products = await productService.getAllProducts();
+      res.status(200).json(products);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to retrieve products' });
     }
   },
 
-  updateProduct: (req, res) => {
+  addProduct: async (req, res) => {
+    const { name, price, description, category, image, stock } = req.body;
+    try {
+      const newProduct = await productService.addProduct(name, price, description, category, image, stock);
+      res.status(201).json(newProduct);
+    } catch (error) {
+      res.status(500).json({ error: 'Product creation failed' });
+    }
+  },
+
+  getProductById: async (req, res) => {
+    const productId = parseInt(req.params.productId);
+    try {
+      const product = await productService.getProductById(productId);
+      if (product) {
+        res.status(200).json(product);
+      } else {
+        res.status(404).json({ error: 'Product not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Error retrieving product' });
+    }
+  },
+
+  updateProduct: async (req, res) => {
     const productId = parseInt(req.params.productId);
     const updatedData = req.body;
-    const updatedProduct = productService.updateProduct(productId, updatedData);
-    if (updatedProduct) {
-      res.status(200).json(updatedProduct);
-    } else {
-      res.status(404).json({ error: 'Product not found' });
+    try {
+      const updatedProduct = await productService.updateProduct(productId, updatedData);
+      if (updatedProduct) {
+        res.status(200).json(updatedProduct);
+      } else {
+        res.status(404).json({ error: 'Product not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Error updating product' });
     }
   },
 
-  deleteProduct: (req, res) => {
+  deleteProduct: async (req, res) => {
     const productId = parseInt(req.params.productId);
-    const deletedProduct = productService.deleteProduct(productId);
-    if (deletedProduct) {
-      res.status(200).json(deletedProduct);
-    } else {
-      res.status(404).json({ error: 'Product not found' });
+    try {
+      const deletedProduct = await productService.deleteProduct(productId);
+      if (deletedProduct) {
+        res.status(200).json(deletedProduct);
+      } else {
+        res.status(404).json({ error: 'Product not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Error deleting product' });
     }
   }
 };

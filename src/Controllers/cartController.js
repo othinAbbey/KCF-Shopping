@@ -1,25 +1,37 @@
 const cartService = require('../services/cartService');
 
 const cartController = {
-  viewCart: (req, res) => {
+  viewCart: async (req, res) => {
     const userId = req.userId; // Assuming userId is obtained from authentication middleware
-    const cart = cartService.getUserCart(userId);
-    res.status(200).json(cart);
+    try {
+      const cart = await cartService.getUserCart(userId);
+      res.status(200).json(cart);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to retrieve cart' });
+    }
   },
 
-  addToCart: (req, res) => {
+  addToCart: async (req, res) => {
     const userId = req.userId; // Assuming userId is obtained from authentication middleware
     const productId = parseInt(req.body.productId);
     const quantity = parseInt(req.body.quantity);
-    const updatedCart = cartService.addToCart(userId, productId, quantity);
-    res.status(200).json(updatedCart);
+    try {
+      const updatedCart = await cartService.addToCart(userId, productId, quantity);
+      res.status(200).json(updatedCart);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to add item to cart' });
+    }
   },
 
-  removeFromCart: (req, res) => {
+  removeFromCart: async (req, res) => {
     const userId = req.userId; // Assuming userId is obtained from authentication middleware
     const productId = parseInt(req.params.productId);
-    const updatedCart = cartService.removeFromCart(userId, productId);
-    res.status(200).json(updatedCart);
+    try {
+      const updatedCart = await cartService.removeFromCart(userId, productId);
+      res.status(200).json(updatedCart);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to remove item from cart' });
+    }
   }
 };
 

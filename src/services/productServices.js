@@ -1,42 +1,73 @@
-const Product = require('../models/Product');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 class ProductService {
-  constructor() {
-    this.products = []; // Assume products are stored in an array (simulated database)
-  }
-
-  getAllProducts() {
-    return this.products;
-  }
-
-  addProduct(name, price, description, category, image, stock) {
-    const id = this.products.length + 1;
-    const newProduct = new Product(id, name, price, description, category, image, stock);
-    this.products.push(newProduct);
-    return newProduct;
-  }
-
-  getProductById(productId) {
-    return this.products.find(product => product.id === productId);
-  }
-
-  updateProduct(productId, updatedData) {
-    const index = this.products.findIndex(product => product.id === productId);
-    if (index !== -1) {
-      this.products[index] = { ...this.products[index], ...updatedData };
-      return this.products[index];
+  async getAllProducts() {
+    try {
+      const products = await prisma.product.findMany();
+      return products;
+    } catch (error) {
+      throw error; // Handle error appropriately
     }
-    return null;
   }
 
-  deleteProduct(productId) {
-    const index = this.products.findIndex(product => product.id === productId);
-    if (index !== -1) {
-      const deletedProduct = this.products[index];
-      this.products.splice(index, 1);
+  async addProduct(name, price, description, category, image, stock) {
+    try {
+      const newProduct = await prisma.product.create({
+        data: {
+          name,
+          price,
+          description,
+          category,
+          image,
+          stock,
+          // ... other product fields
+        }
+      });
+      return newProduct;
+    } catch (error) {
+      throw error; // Handle error appropriately
+    }
+  }
+
+  async getProductById(productId) {
+    try {
+      const product = await prisma.product.findUnique({
+        where: {
+          id: productId
+        }
+      });
+      return product;
+    } catch (error) {
+      throw error; // Handle error appropriately
+    }
+  }
+
+  async updateProduct(productId, updatedData) {
+    try {
+      const updatedProduct = await prisma.product.update({
+        where: {
+          id: productId
+        },
+        data: updatedData
+      });
+      return updatedProduct;
+    } catch (error) {
+      throw error; // Handle error appropriately
+    }
+  }
+
+  async deleteProduct(productId) {
+    try {
+      const deletedProduct = await prisma.product.delete({
+        where: {
+          id: productId
+        }
+      });
       return deletedProduct;
+    } catch (error) {
+      throw error; // Handle error appropriately
     }
-    return null;
   }
 }
 

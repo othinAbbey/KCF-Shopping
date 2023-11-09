@@ -6,21 +6,40 @@ const prisma = new PrismaClient();
 const saltRounds = 10;
 const secretKey = 'your-secret-key'; // Replace with a secure secret key
 
+// async function createUser(username, email, password) {
+//   try {
+//     const newUser = await prisma.user.create({
+//       data: {
+//         username,
+//         email,
+//         password,
+//         // ... other user fields
+//       }
+//     });
+//     return newUser;
+//   } catch (error) {
+//     throw error; // Handle error appropriately
+//   }
+// }
+
 async function createUser(username, email, password) {
-  try {
-    const newUser = await prisma.user.create({
-      data: {
-        username,
-        email,
-        password,
-        // ... other user fields
-      }
-    });
-    return newUser;
-  } catch (error) {
-    throw error; // Handle error appropriately
+    try {
+      const newUser = await prisma.user.create({
+        data: {
+          username,
+          email,
+          password,
+          // ... other user fields
+        }
+      });
+      return newUser;
+    } catch (error) {
+      console.error('Error creating a user:', error.message);
+      throw new Error('Failed to create a user');
+    }
   }
-}
+  
+  
 
 async function findUserByEmail(email) {
   try {
