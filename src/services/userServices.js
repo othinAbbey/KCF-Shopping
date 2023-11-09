@@ -1,10 +1,17 @@
-const User = require('../models/userModel');
+const User = require('../models/User');
 
-class AuthService {
-  // Simulated database or data storage
-  users = [];
+class UserService {
+  constructor() {
+    this.users = [];
+  }
 
   registerUser(username, email, password) {
+    // Check for existing user with the same email
+    const existingUser = this.users.find((user) => user.email === email);
+    if (existingUser) {
+      return { error: 'Email already in use' };
+    }
+
     const id = this.users.length + 1;
     const newUser = new User(id, username, email, password);
     this.users.push(newUser);
@@ -17,4 +24,4 @@ class AuthService {
   }
 }
 
-module.exports = new AuthService();
+module.exports = new UserService();
