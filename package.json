@@ -4,7 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon src/app.js"
+    "start": "nodemon src/app.js",
+    "test": "jest --watch --verbose",
+    "build": "npm install"
+
   },
   "repository": {
     "type": "git",
