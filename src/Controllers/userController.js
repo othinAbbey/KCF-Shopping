@@ -57,10 +57,10 @@ async function authenticateUser(email, password) {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     // console.log('User:', user )
-    console.log('Password:', password);
-    console.log('User password', user.password)
-    console.log('Hashed Password:', user.hashedPassword);
-    console.log('Password Match:', passwordMatch);
+    // console.log('Password:', password);
+    // console.log('User password', user.password)
+    // console.log('Hashed Password:', user.hashedPassword);
+    // console.log('Password Match:', passwordMatch);
     if (!passwordMatch) {
       return null; // Incorrect password
     
@@ -88,7 +88,7 @@ async function login(req, res) {
     if (!token) {
       res.status(401).json({ error: 'Invalid credentials' });
     } else {
-      res.json({ token });
+      res.json({ message: 'Login successful', token });
     }
   } catch (error) {
     console.error('Login failed:', error.message);

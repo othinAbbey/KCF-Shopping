@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const { verifyToken } = authMiddleware;
 
 // User signup endpoint
 router.post('/signup', async (req, res) => {

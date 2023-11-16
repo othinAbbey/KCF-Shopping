@@ -4,7 +4,8 @@ const productController = require('../controllers/productController');
 const { verifyToken } = require("../middlewares/authMiddleware");
 // const { routes } = require('../app');
 
-router.post('/', verifyToken ,productController.addProduct);
+// router.post('/', verifyToken ,productController.addProduct);
+router.post('/',productController.addProduct);
 
 
 router.get('/', productController.getAllProducts);
