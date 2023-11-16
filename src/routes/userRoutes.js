@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
   try {
     const user = await userController.createUser(username, email, password,role);
     res.status(200).json(user); // Assuming successful signup returns 200 status
-    // res.json(user);
+    res.json(user);
   } catch (error) {
     res.status(500).json({ error: 'User creation failed' });
   }
