@@ -4,11 +4,11 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Import routes and controllers
-const userRoutes = require('./routes/userRoutes');
-const userController = require('./controllers/userController');
-const productRoutes = require('./routes/productRoutes');
+const userRoutes = require("./routes/userRoutes");
+const userController = require("./Controllers/userController");
+const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
-const productController = require('./controllers/productController'); // Import the updated productController
+const productController = require("./Controllers/productController"); // Import the updated productController
 
 app.use(express.json());
 
