@@ -21,22 +21,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// User login endpoint with authentication
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const token = await userController.authenticateUser(email, password);
-    if (!token) {
-      res.status(401).json({ error: 'Invalid credentials' });
-    } else {
-      res.json({ token });
-    }
-  } catch (error) {
-    console.error('Login failed:', error.message);
-    res.status(500).json({ error: 'Login failed' });
-  }
-});
+router.post('/login', userController.login);
 
 module.exports = router;
 
