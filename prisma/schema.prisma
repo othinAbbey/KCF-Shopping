@@ -16,6 +16,7 @@ model User {
   email    String @unique
   password String
   Cart     Cart[]
+  role     String   @default("user") // Assuming a default role of "user"
 }
 
 model Product {
