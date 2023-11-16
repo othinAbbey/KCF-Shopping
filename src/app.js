@@ -62,6 +62,7 @@ const prisma = new PrismaClient();
 const userRoutes = require('./routes/userRoutes');
 const userController = require('./controllers/userController');
 const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require("./routes/cartRoutes");
 const productController = require('./controllers/productController'); // Import the updated productController
 
 app.use(express.json());
@@ -71,6 +72,9 @@ app.use('/auth', userRoutes);
 
 // Product routes
 app.use('/products', productRoutes);
+
+//Cart routes
+app.use('/cart', cartRoutes);
 
 
 
