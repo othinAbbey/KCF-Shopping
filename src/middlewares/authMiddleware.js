@@ -13,6 +13,8 @@ const verifyToken = (req, res, next) => {
     console.log('Decoded token:', decoded);
     req.user = decoded.user;
 
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
     // Check if the user has the required role
     if (req.user.role !== 'admin') {
       console.error('Error verifying token:', error.message);
