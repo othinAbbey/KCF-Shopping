@@ -4,12 +4,25 @@ const jwt = require('jsonwebtoken');
 
 const prisma = new PrismaClient();
 const saltRounds = 10;
-const secretKey = process.env.JWT_SECRET; // Replace with a secure secret key
+const secretKey = 12233; 
+
+
 
 // creating a new user
-async function createUser(username, email, password,role) {
+async function createUser(username, email, password, role) {
   try {
-     // Hash the password before storing it in the database
+    // Check if a user with the same email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) {
+      throw new Error('User with this email already exists');
+    }
+
+    // Hash the password before storing it in the database
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await prisma.user.create({
@@ -18,8 +31,9 @@ async function createUser(username, email, password,role) {
         email,
         password: hashedPassword,
         role,
-      }
+      },
     });
+
     console.log('User created:', newUser);
     return newUser;
   } catch (error) {
@@ -80,21 +94,25 @@ async function authenticateUser(email, password) {
   
 }
 
+
+
 async function login(req, res) {
   const { email, password } = req.body;
 
   try {
     const token = await authenticateUser(email, password);
     if (!token) {
-      res.status(401).json({ error: 'Invalid credentials' });
-    } else {
-      res.json({ message: 'Login successful', token });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    // Successful login
+    res.json({ message: 'Login successful', token });
   } catch (error) {
     console.error('Login failed:', error.message);
     res.status(500).json({ error: 'Login failed' });
   }
 }
+
 module.exports = {
   createUser,
   findUserByEmail,
