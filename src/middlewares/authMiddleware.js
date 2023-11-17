@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secretKey = 12233;
+const secretKey = 'your_hardcoded_secret_key'; // Replace with your actual secret key
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
@@ -12,8 +12,6 @@ const verifyToken = (req, res, next) => {
     const decoded = jwt.verify(token, secretKey);
     console.log('Decoded token:', decoded);
     req.user = decoded.user;
-
-    console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
     // Check if the user has the required role
     if (req.user.role !== 'admin') {
