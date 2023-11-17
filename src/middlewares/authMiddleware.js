@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secretKey = 'your_hardcoded_secret_key'; // Replace with your actual secret key
+const secretKey = 12233 
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
     console.log('Decoded token:', decoded);
     req.user = decoded.user;
 
-    // Check if the user has the required role
+    
     if (req.user.role !== 'admin') {
       console.error('Error verifying token:', error.message);
       return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
