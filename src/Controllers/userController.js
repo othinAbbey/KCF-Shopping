@@ -106,12 +106,13 @@ async function login(req, res) {
     }
 
     // Successful login
-    res.json({ message: 'Login successful', token });
+    return res.json({ message: 'Login successful', token });
   } catch (error) {
     console.error('Login failed:', error.message);
-    res.status(500).json({ error: 'Login failed' });
+    return res.status(500).json({ error: 'Login failed' });
   }
 }
+
 
 module.exports = {
   createUser,
