@@ -4,8 +4,8 @@ const productController = require("../Controllers/productController");
 const { verifyToken } = require("../middlewares/authMiddleware");
 // const { routes } = require('../app');
 
-router.post('/', verifyToken ,productController.addProduct);
-// router.post('/',productController.addProduct);
+// router.post('/', verifyToken ,productController.addProduct);
+router.post('/',productController.addProduct);
 
 
 router.get('/', productController.getAllProducts);
@@ -15,11 +15,13 @@ router.get('/:productId', productController.getProductById);
 
 
 // Update a specific product by ID
-router.put('/:productId', verifyToken,productController.updateProduct);
+// router.put('/:productId', verifyToken,productController.updateProduct);
+router.put('/:productId',productController.updateProduct);
 
 
 // Delete a specific product by ID
-router.delete('/:productId', verifyToken,productController.deleteProduct);
+// router.delete('/:productId', verifyToken,productController.deleteProduct);
+router.delete('/:productId',productController.deleteProduct);
 
 
 module.exports = router;
