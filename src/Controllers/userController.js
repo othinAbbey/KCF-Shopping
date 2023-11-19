@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const prisma = new PrismaClient();
 const saltRounds = 10;
-const secretKey = 12233; 
+const secretKey = "12233"; 
 
 
 
@@ -42,21 +42,7 @@ async function createUser(username, email, password, role) {
   }
 }
 
-// Finding a user by email
-async function findUserByEmail(email) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        email
-      }
-    });
-    return user;
-  } catch (error) {
-    throw error;
-  }
-}
 
-// Authenticating a user using email and password with bcrypt and jwt
 async function authenticateUser(email, password) {
   try {
     const user = await prisma.user.findUnique({
@@ -70,28 +56,19 @@ async function authenticateUser(email, password) {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    // console.log('User:', user )
-    // console.log('Password:', password);
-    // console.log('User password', user.password)
-    // console.log('Hashed Password:', user.hashedPassword);
-    // console.log('Password Match:', passwordMatch);
+
     if (!passwordMatch) {
       return null; // Incorrect password
-    
-  }
-  console.log('User ID:', user.id);
-  const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
-  console.log('Generated Token:', token);
-  return token;
-
-    
+    }
+    console.log("login successful");
+    // console.log('User authenticated:', user);
+    const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
+    // console.log('Generated Token:', token);
+    return token;
   } catch (error) {
     console.error('Error authenticating user:', error.message);
     throw new Error('Login failed. Please try again later.');
   }
-
-  
-  
 }
 
 
@@ -101,25 +78,20 @@ async function login(req, res) {
 
   try {
     const token = await authenticateUser(email, password);
+    
     if (!token) {
-
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
-    // Successful login
-    return res.json({ message: 'Login successful', token });
+    
+    res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
-    console.log('JWT_SECRET:', process.env.JWT_SECRET);
     console.error('Login failed:', error.message);
     return res.status(500).json({ error: 'Login failed' });
   }
 }
 
-
 module.exports = {
   createUser,
-  findUserByEmail,
   authenticateUser,
   login
-  // Add other user-related functions here to handle different operations
 };
