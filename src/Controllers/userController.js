@@ -9,7 +9,41 @@ const secretKey = "12233";
 
 
 // creating a new user
-async function createUser(username, email, password, role) {
+// async function createUser(username, email, password, role) {
+//   try {
+//     // Check if a user with the same email already exists
+//     const existingUser = await prisma.user.findUnique({
+//       where: {
+//         email,
+//       },
+//     });
+
+//     if (existingUser) {
+//       throw new Error('User with this email already exists');
+//     }
+
+//     // Hash the password before storing it in the database
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+//     const newUser = await prisma.user.create({
+//       data: {
+//         username,
+//         email,
+//         password: hashedPassword,
+//         role,
+//       },
+//     });
+
+//     console.log('User created:', newUser);
+//     return newUser;
+//   } catch (error) {
+//     console.error('Error creating a user:', error.message);
+//     throw new Error('Failed to create a user');
+//   }
+// }
+
+// creating a new user
+async function createUser(username, email, password, role, res) {
   try {
     // Check if a user with the same email already exists
     const existingUser = await prisma.user.findUnique({
@@ -19,7 +53,7 @@ async function createUser(username, email, password, role) {
     });
 
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      return res.status(400).json({ error: 'User with this email already exists' });
     }
 
     // Hash the password before storing it in the database
@@ -35,12 +69,13 @@ async function createUser(username, email, password, role) {
     });
 
     console.log('User created:', newUser);
-    return newUser;
+    return res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (error) {
     console.error('Error creating a user:', error.message);
-    throw new Error('Failed to create a user');
+    return res.status(500).json({ error: 'Failed to create a user' });
   }
 }
+
 
 
 async function authenticateUser(email, password) {

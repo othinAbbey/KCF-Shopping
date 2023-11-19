@@ -3,23 +3,15 @@ const router = express.Router();
 const userController = require("../Controllers/userController");
 const authMiddleware = require('../middlewares/authMiddleware');
 const { verifyToken } = authMiddleware;
+const { createUser } = require("../Controllers/userController");
 
-// User signup endpoint
-router.post('/signup', async (req, res) => {
-  const { username, email, password , role} = req.body;
 
-   // Check for missing required fields
-   if (!username || !email || !password || !role) {
-    res.status(400).json({ error: 'Missing required fields' });
-    return;
-  }
-  try {
-    const user = await userController.createUser(username, email, password,role);
-    res.status(200).json(user); // Assuming successful signup returns 200 status
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: 'User creation failed' });
-  }
+// User signup route
+router.post("/signup", async (req, res) => {
+  const { username, email, password, role } = req.body;
+
+  // Call createUser function with the res object
+  await createUser(username, email, password, role, res);
 });
 
 router.post('/login', userController.login);
