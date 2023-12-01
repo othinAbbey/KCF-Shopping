@@ -7,7 +7,7 @@ class ProductService {
       const products = await prisma.product.findMany();
       return products;
     } catch (error) {
-      throw error; // Handle error appropriately
+      throw error; 
     }
   }
 
@@ -25,7 +25,7 @@ class ProductService {
       });
       return newProduct;
     } catch (error) {
-      throw error; // Handle error appropriately
+      throw error; 
     }
   }
 

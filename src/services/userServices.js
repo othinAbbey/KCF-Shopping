@@ -6,7 +6,6 @@ class UserService {
   }
 
   registerUser(username, email, password) {
-    // Check for existing user with the same email
     const existingUser = this.users.find((user) => user.email === email);
     if (existingUser) {
       return { error: 'Email already in use' };
