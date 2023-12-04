@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 app.use(express.json());
 app.use(cors()); // Use cors middleware
@@ -22,6 +23,10 @@ app.use('/products', productRoutes);
 
 // Cart routes
 app.use('/cart', cartRoutes);
+
+
+//category routes
+app.use('/categories', categoryRoutes);
 
 // Product Endpoints - Managed via product routes and controllers
 
