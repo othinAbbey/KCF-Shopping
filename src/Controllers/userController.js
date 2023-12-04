@@ -1,17 +1,18 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
+const { hash } = require('bcrypt');
+const { createToken } = require("../middlewares/authMiddleware");
 const prisma = new PrismaClient();
 const saltRounds = 10;
-const secretKey = "12233"; 
-
-
 
 
 // creating a new user
-async function createUser(username, email, password, role, res) {
+async function signup(req, res) {
+  console.log('Received request body:', req.body);
+  const { username, email, password, role } = req.body;
+
   try {
+    // Check if the user with the given email already exists
     const existingUser = await prisma.user.findUnique({
       where: {
         email,
@@ -22,76 +23,72 @@ async function createUser(username, email, password, role, res) {
       return res.status(400).json({ error: 'User with this email already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // Hash the password before storing it in the database
+    const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create a new user
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
-        role,
       },
     });
 
     console.log('User created:', newUser);
-    return res.status(201).json({ message: 'User created successfully', user: newUser });
+    res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (error) {
     console.error('Error creating a user:', error.message);
-    return res.status(500).json({ error: 'Failed to create a user' });
+    res.status(500).json({ error: 'Failed to create a user' });
   }
 }
 
+// async function authenticateUser(req, res){
+//   const users = await prisma.users.findMany();
+//   res.send(users)
+// }
 
+async function loginUser(req, res){
+  //user inputs a username and password
+  let userDetails = req.body;
 
-async function authenticateUser(email, password) {
+  //find the user in the database
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+      where:{
+        email: userDetails.email,
+      }
+    })
 
-    if (!user) {
-      return null; // if No User is found
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
-      return null; // Incorrect password
-    }
-    console.log("login successful");
-    // console.log('User authenticated:', user);
-    const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
-    // console.log('Generated Token:', token);
-    return token;
-  } catch (error) {
-    console.error('Error authenticating user:', error.message);
-    throw new Error('Login failed. Please try again later.');
-  }
-}
-
-
-
-async function login(req, res) {
-  const { email, password } = req.body;
-
-  try {
-    const token = await authenticateUser(email, password);
-    
-    if (!token) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    
-    res.status(200).json({ message: 'Login successful', token });
+    //if statements that return errors if the user is not found or the password is incorrect
+    if(user && (await bcrypt.compare(userDetails.password, user.password))){
+      //if the user is found and the password is correct, generate a token and send it to the user
+      const token = createToken({
+        id: user.id,
+        username: user.username,
+        // role: user.role,
+      });
+      res.status(200).json({ message: "Login successful", token });
+      } else {
+        res.status(404).json({ message: "Invalid credentials" });
+       }
   } catch (error) {
     console.error('Login failed:', error.message);
     return res.status(500).json({ error: 'Login failed' });
   }
 }
 
+
+
+
+// module.exports = {
+//   createUser,
+//   authenticateUser,
+//   login
+// };
+
 module.exports = {
-  createUser,
-  authenticateUser,
-  login
+  signup,
+  // authenticateUser,
+  loginUser
 };

@@ -21,7 +21,8 @@ const productController = {
 
     try {
       const newProduct = await productService.addProduct(name, price, description, category, image, stock);
-      res.status(201).json(newProduct);
+      // res.status(200).json(newProduct);
+      res.status(201).json({ message: 'Product created successfully', product: newProduct });
     } catch (error) {
       console.error('Error creating a product:', error); // Log the entire error object
       res.status(500).json({ error: 'Failed to create a product' });
